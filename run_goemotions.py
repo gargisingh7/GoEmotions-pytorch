@@ -162,7 +162,7 @@ def evaluate(args, model, eval_dataset, mode, global_step=None):
     nb_eval_steps = 0
     preds = None
     out_label_ids = None
-
+    
     for batch in tqdm(eval_dataloader, desc="Evaluating"):
         model.eval()
         batch = tuple(t.to(args.device) for t in batch)
@@ -194,7 +194,15 @@ def evaluate(args, model, eval_dataset, mode, global_step=None):
     preds[preds <= args.threshold] = 0
     result = compute_metrics(out_label_ids, preds)
     results.update(result)
-
+    labels_bin = []
+    print(type(preds))
+    print(type(preds[0]))
+    print(preds[0])
+    print(type(out_label_ids))
+    print(type(out_label_ids[0]))
+    print(out_label_ids[0])
+    import sys
+    sys.exit()
     output_dir = os.path.join(args.output_dir, mode)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -250,7 +258,7 @@ def main(cli_args):
 
     if dev_dataset is None:
         args.evaluate_test_during_training = True  # If there is no dev dataset, only use test dataset
-
+    # args.do_train = 0
     if args.do_train:
         global_step, tr_loss = train(args, model, tokenizer, train_dataset, dev_dataset, test_dataset)
         logger.info(" global_step = {}, average loss = {}".format(global_step, tr_loss))
@@ -266,13 +274,14 @@ def main(cli_args):
             logging.getLogger("transformers.configuration_utils").setLevel(logging.WARN)  # Reduce logging
             logging.getLogger("transformers.modeling_utils").setLevel(logging.WARN)  # Reduce logging
         logger.info("Evaluate the following checkpoints: %s", checkpoints)
-        for checkpoint in checkpoints:
-            global_step = checkpoint.split("-")[-1]
-            model = BertForMultiLabelClassification.from_pretrained(checkpoint)
-            model.to(args.device)
-            result = evaluate(args, model, test_dataset, mode="test", global_step=global_step)
-            result = dict((k + "_{}".format(global_step), v) for k, v in result.items())
-            results.update(result)
+        # for checkpoint in checkpoints:
+        global_step = 0 # checkpoint.split("-")[-1]
+        # model = BertForMultiLabelClassification.from_pretrained(checkpoint)
+        model = BertForMultiLabelClassification.from_pretrained("monologg/bert-base-cased-goemotions-original")
+        model.to(args.device)
+        result = evaluate(args, model, test_dataset, mode="test", global_step=global_step)
+        result = dict((k + "_{}".format(global_step), v) for k, v in result.items())
+        results.update(result)
 
         output_eval_file = os.path.join(args.output_dir, "eval_results.txt")
         with open(output_eval_file, "w") as f_w:
