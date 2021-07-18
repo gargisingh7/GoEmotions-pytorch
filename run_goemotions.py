@@ -201,6 +201,11 @@ def evaluate(args, model, eval_dataset, mode, global_step=None):
     print(type(out_label_ids))
     print(type(out_label_ids[0]))
     print(out_label_ids[0])
+    print("bin")
+    print(preds[0]==out_label_ids[0])
+    labels_bin = [preds[i]==out_label_ids[i] for i in len(preds)]
+    print("labels_bin")
+    print(labels_bin)
     import sys
     sys.exit()
     output_dir = os.path.join(args.output_dir, mode)
