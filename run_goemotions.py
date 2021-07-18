@@ -282,7 +282,7 @@ def main(cli_args):
         # for checkpoint in checkpoints:
         global_step = 0 # checkpoint.split("-")[-1]
         # model = BertForMultiLabelClassification.from_pretrained(checkpoint)
-        model = BertForMultiLabelClassification.from_pretrained("/content/drive/MyDrive/NSP-MLM") #"monologg/bert-base-cased-goemotions-original")
+        model = BertForMultiLabelClassification.from_pretrained("monologg/bert-base-cased-goemotions-original")
         model.to(args.device)
         result = evaluate(args, model, test_dataset, mode="test", global_step=global_step)
         result = dict((k + "_{}".format(global_step), v) for k, v in result.items())
