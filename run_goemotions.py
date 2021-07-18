@@ -206,8 +206,7 @@ def evaluate(args, model, eval_dataset, mode, global_step=None):
     labels_bin = [(preds[i]==out_label_ids[i]).all() for i in range(len(preds))]
     print("labels_bin")
     print(labels_bin)
-    import sys
-    sys.exit()
+
     output_dir = os.path.join(args.output_dir, mode)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
